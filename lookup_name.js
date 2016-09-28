@@ -1,7 +1,7 @@
 'use strict';
 
 const arg = process.argv[2];
-const pg = require("pg");
+const pg = require("knex")({client: 'pg'});
 const settings = require("./settings");
 const client = new pg.Client({
   user     : settings.user,
@@ -30,8 +30,9 @@ function errorHandler(message, err) {
 
 function printResults (results, userInput) {
   console.log(`Found ${results.rows.length} person(s) by the name ${userInput}`);
-  //foreach results print if more results
-  console.log(results.rows[0].first_name, results.rows[0].last_name, results.rows[0].birthdate);
+  results.rows.forEach(function (rows, i) {
+    console.log(`${i+1}) ${rows.first_name} ${rows.last_name} born on ${rows.birthdate}`);
+  });
   client.end();
 };
 
